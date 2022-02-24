@@ -1,15 +1,13 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  
-  font-family: 'Oswald', sans-serif;
-  
+  font-family: "Oswald", sans-serif;
 }
 
-
-@import url('./pages/Index/index.css');
-@import url('./components/auth/auth.css');
+@import url("./pages/Index/index.css");
+@import url("./components/auth/auth.css");
+@import url("./utils/notifications/notification.css");

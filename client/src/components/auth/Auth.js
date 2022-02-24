@@ -1,16 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  isEmpty,
+  isEmail,
+  isLength,
+  isLengthUsername,
+} from "../../utils/validations/Validation";
+
+import { ErrMsg, SuccessMsg } from "../../utils/notifications/Notification";
 
 const initialState = {
   username: "",
   email: "",
   password: "",
+  err: "",
+  success: "",
 };
 
 function Auth() {
   const [user, setUser] = useState(initialState);
 
-  const { username, email, password } = user;
+  const { username, email, password, err, success } = user;
 
   const onChangeInput = (e) => {
     const { name, value } = e.target;
@@ -19,8 +29,33 @@ function Auth() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isEmpty(username) || isEmpty(email) || isEmpty(password))
+      return setUser({
+        ...user,
+        err: "Por favor, rellene todos los campos",
+        success: "",
+      });
+
+    if (!isEmail(email))
+      return setUser({ ...user, err: "El correo no es correcto", success: "" });
+
+    if (isLength(password))
+      return setUser({
+        ...user,
+        err: "La contraseña debe contener al menos 6 carácteres",
+        success: "",
+      });
+
+    if (isLengthUsername(username))
+      return setUser({
+        ...user,
+        err: "El usuario debe tener al menos 3 carácteres",
+        success: "",
+      });
+
     try {
-      await axios.post("/user", {
+      const res = await axios.post("/user", {
         username,
         email,
         password,
@@ -28,15 +63,20 @@ function Auth() {
 
       localStorage.setItem("firstLogin", true);
 
-      window.location.href = "/";
+      setUser({ ...user, err: "", success: res.data.msg });
     } catch (err) {
-      console.log(err);
+      err.response.data.msg &&
+        setUser({ ...user, err: err.response.data.msg, success: "" });
     }
   };
 
   return (
     <div className="container-page" id="Container">
       <div className="login-container" id="LoginContainer">
+        <label>
+          {err && ErrMsg(err)}
+          {success && SuccessMsg(success)}
+        </label>
         <h1 className="title">Iniciar sesión</h1>
         <form action="">
           <div className="input-line-container">
@@ -73,7 +113,14 @@ function Auth() {
       </div>
 
       <div className="register-container" id="RegisterContainer">
+        <label id="errMessage">
+          {err && ErrMsg(err)}
+
+          {success && SuccessMsg(success)}
+        </label>
+
         <h1 className="title">Registrarse</h1>
+
         <form onSubmit={handleSubmit}>
           <div className="input-line-container">
             <span className="name-input">Usuario</span>
@@ -81,10 +128,13 @@ function Auth() {
               type="text"
               name="username"
               className="input-line"
-              id=""
+              id="username"
               value={username}
               onChange={onChangeInput}
             />
+            <p id="username-err" style={{ display: "none" }}>
+              Error
+            </p>
           </div>
           <div className="input-line-container">
             <span className="name-input">Correo electrónico</span>
@@ -92,7 +142,7 @@ function Auth() {
               type="email"
               name="email"
               className="input-line"
-              id=""
+              id="email"
               value={email}
               onChange={onChangeInput}
             />
@@ -103,7 +153,7 @@ function Auth() {
               type="password"
               name="password"
               className="input-line"
-              id=""
+              id="password"
               value={password}
               onChange={onChangeInput}
             />

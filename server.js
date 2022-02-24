@@ -20,7 +20,7 @@ mongoose.connect(URI, {
     useUnifiedTopology: true,
 }, err =>{
     if(err) throw err;
-    console.log('No se pudo establecer conexión con la base de datos')
+    console.log('conexión con la base de datos exitosa')
 })
 
 if(process.env.NODE_ENV === 'production'){
