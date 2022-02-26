@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import {
   isEmpty,
   isEmail,
@@ -16,6 +19,18 @@ const initialState = {
   err: "",
   success: "",
 };
+
+const message = ()=>{
+  toast.error('🦄 Wow so easy!', {
+    marginLeft: "200px",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+}
 
 function Auth() {
   const [user, setUser] = useState(initialState);
@@ -113,12 +128,13 @@ function Auth() {
       </div>
 
       <div className="register-container" id="RegisterContainer">
-        <label id="errMessage">
-          {err && ErrMsg(err)}
-
-          {success && SuccessMsg(success)}
-        </label>
-
+      <ToastContainer >
+        
+          
+        {err && message(err)}
+        {success && SuccessMsg(success)}
+      
+        </ToastContainer >
         <h1 className="title">Registrarse</h1>
 
         <form onSubmit={handleSubmit}>
